@@ -27,12 +27,14 @@ workflows:
           pnpm cap sync ios
 
       # 4️⃣ Build iOS app using Xcode
-      - name: Build iOS app
+      - name: Build unsigned iOS app
         script: |
           xcodebuild -workspace ios/App/App.xcworkspace \
           -scheme App \
           -configuration Release \
-          -archivePath build/App.xcarchive archive
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 14' \
+          build
 
       # 5️⃣ Export .ipa file
       - name: Export IPA
