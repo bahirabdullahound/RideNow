@@ -27,7 +27,14 @@ workflows:
         script: |
           pnpm cap sync ios
 
-      # 4️⃣ Build unsigned iOS app (for simulator)
+      # 4️⃣ Install CocoaPods dependencies
+      - name: Install iOS Pods
+        script: |
+          cd ios
+          pod install
+          cd ..
+
+      # 5️⃣ Build unsigned iOS app (for simulator)
       - name: Build unsigned iOS app
         script: |
           cd ios
