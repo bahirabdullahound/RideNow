@@ -1,0 +1,46 @@
+workflows:
+  build_ios:
+    name: Build iOS app (Next.js + Capacitor)
+    environment:
+      node: 20
+      xcode: 15.3
+      vars:
+        APP_NAME: "RideNow"
+    scripts:
+      # 1️⃣ Install dependencies
+      - name: Install dependencies
+        script: |
+          npm install -g pnpm
+          pnpm install
+
+      # 2️⃣ Build Next.js app
+      - name: Build Next.js for production
+        script: |
+          pnpm run build
+          pnpm run export
+          mkdir -p ios/App/public
+          cp -r out/* ios/App/public/
+
+      # 3️⃣ Sync Capacitor iOS
+      - name: Sync Capacitor
+        script: |
+          pnpm cap sync ios
+
+      # 4️⃣ Build iOS app using Xcode
+      - name: Build iOS app
+        script: |
+          xcodebuild -workspace ios/App/App.xcworkspace \
+          -scheme App \
+          -configuration Release \
+          -archivePath build/App.xcarchive archive
+
+      # 5️⃣ Export .ipa file
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+          -archivePath build/App.xcarchive \
+          -exportOptionsPlist ios/App/exportOptions.plist \
+          -exportPath build/ipa
+
+    artifacts:
+      - build/ipa/*.ipa
