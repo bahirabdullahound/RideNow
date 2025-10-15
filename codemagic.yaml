@@ -16,59 +16,45 @@ workflows:
           pnpm install
 
       # 2️⃣ Build Next.js app
-      - name: Build Next.js for production
+      - name: Build Next.js
         script: |
           pnpm run build
 
       # 3️⃣ Add iOS platform (if not exists)
       - name: Add iOS platform
         script: |
-          npx cap add ios || echo "iOS platform already exists"
+          npx cap add ios || echo "iOS already exists"
 
       # 4️⃣ Sync Capacitor for iOS
       - name: Sync Capacitor
         script: |
           npx cap sync ios
 
-      # 5️⃣ Install CocoaPods dependencies
+      # 5️⃣ Install iOS Pods
       - name: Install iOS Pods
         script: |
           cd ios/App
-          pod install
+          pod install --repo-update
           cd ../..
 
-      # 6️⃣ Verify workspace exists
-      - name: Verify iOS workspace
-        script: |
-          ls -la ios/App/
-          if [ ! -f "ios/App/App.xcworkspace/contents.xcworkspacedata" ]; then
-            echo "Workspace not found, creating manually..."
-            cd ios/App
-            pod install --repo-update
-            cd ../..
-          fi
-
-      # 7️⃣ Build unsigned iOS app (for simulator)
-      - name: Build unsigned iOS app
+      # 6️⃣ Build iOS app for simulator
+      - name: Build iOS app for simulator
         script: |
           cd ios/App
           xcodebuild \
             -workspace App.xcworkspace \
             -scheme App \
             -sdk iphonesimulator \
-            -configuration Release \
+            -configuration Debug \
+            -derivedDataPath ../../derived_data \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            DEVELOPMENT_TEAM="" \
-            build
-      - name: List build output
-        script: |
-          echo "Listing iOS build output folders..."
-          ls -R ios/App/build/Build/Products
+            CODE_SIGNING_ALLOWED=NO
+          cd ../..
+
     artifacts:
-      - ios/App/build/Build/Products/*-iphonesimulator/*.app
-      - ios/App/build/Build/Products/*-iphoneos/*.app
+      - derived_data/Build/Products/Debug-iphonesimulator/*.app
+
 
   # build_android:
   #   name: Build Android app (Next.js + Capacitor)
