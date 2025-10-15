@@ -13,7 +13,7 @@ import { useState } from "react";
 
 // Get your key from: https://console.cloud.google.com/google/maps-apis
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-console.log("API Key:", GOOGLE_MAPS_API_KEY);
+
 
 export default function Home() {
     const [fromAddress, setFromAddress] = useState('');
@@ -109,7 +109,7 @@ export default function Home() {
                   />
                 </div>
 
-                <Button
+                {/* <Button
                   onClick={handleShowRoute}
                   disabled={!fromAddress || !toAddress}
                   className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
@@ -117,7 +117,7 @@ export default function Home() {
                 >
                   Show Route
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                </Button> */}
               </CardContent>
             </Card>
 
