@@ -62,47 +62,51 @@ workflows:
             CODE_SIGNING_ALLOWED=NO \
             DEVELOPMENT_TEAM="" \
             build
-
+      - name: List build output
+        script: |
+          echo "Listing iOS build output folders..."
+          ls -R ios/App/build/Build/Products
     artifacts:
-      - ios/App/build/Build/Products/Release-iphonesimulator/*.app
+      - ios/App/build/Build/Products/*-iphonesimulator/*.app
+      - ios/App/build/Build/Products/*-iphoneos/*.app
 
-  build_android:
-    name: Build Android app (Next.js + Capacitor)
-    environment:
-      node: 20
-      java: 21
-      vars:
-        APP_NAME: "RideNow"
-        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: $GOOGLE_MAPS_API_KEY
+  # build_android:
+  #   name: Build Android app (Next.js + Capacitor)
+  #   environment:
+  #     node: 20
+  #     java: 21
+  #     vars:
+  #       APP_NAME: "RideNow"
+  #       NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: $GOOGLE_MAPS_API_KEY
 
-    scripts:
-      # 1️⃣ Install dependencies
-      - name: Install dependencies
-        script: |
-          npm install -g pnpm @capacitor/cli
-          pnpm install
+  #   scripts:
+  #     # 1️⃣ Install dependencies
+  #     - name: Install dependencies
+  #       script: |
+  #         npm install -g pnpm @capacitor/cli
+  #         pnpm install
 
-      # 2️⃣ Build Next.js app
-      - name: Build Next.js for production
-        script: |
-          pnpm run build
+  #     # 2️⃣ Build Next.js app
+  #     - name: Build Next.js for production
+  #       script: |
+  #         pnpm run build
 
-      # 3️⃣ Add Android platform (if not exists)
-      - name: Add Android platform
-        script: |
-          npx cap add android || echo "Android platform already exists"
+  #     # 3️⃣ Add Android platform (if not exists)
+  #     - name: Add Android platform
+  #       script: |
+  #         npx cap add android || echo "Android platform already exists"
 
-      # 4️⃣ Sync Capacitor for Android
-      - name: Sync Capacitor
-        script: |
-          npx cap sync android
+  #     # 4️⃣ Sync Capacitor for Android
+  #     - name: Sync Capacitor
+  #       script: |
+  #         npx cap sync android
 
-      # 5️⃣ Build Android APK
-      - name: Build Android APK
-        script: |
-          cd android
-          ./gradlew assembleDebug
-          cd ..
+  #     # 5️⃣ Build Android APK
+  #     - name: Build Android APK
+  #       script: |
+  #         cd android
+  #         ./gradlew assembleDebug
+  #         cd ..
 
-    artifacts:
-      - android/app/build/outputs/apk/debug/*.apk
+  #   artifacts:
+  #     - android/app/build/outputs/apk/debug/*.apk
